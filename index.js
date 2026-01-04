@@ -1,17 +1,16 @@
 import express from "express";
-import fetch from "node-fetch";
 
 const app = express();
 app.use(express.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
-// 🔹 ROOT TEST (Render alive check)
+// Root test
 app.get("/", (req, res) => {
   res.send("Pay2Call Telegram Bot is LIVE ✅");
 });
 
-// 🔹 TELEGRAM WEBHOOK (MOST IMPORTANT)
+// Telegram webhook
 app.post("/webhook", async (req, res) => {
   const update = req.body;
 
@@ -26,27 +25,22 @@ app.post("/webhook", async (req, res) => {
     }
 
     if (text === "/menu") {
-      reply =
-        "📞 Pay2Call Menu\n\n1️⃣ Talk to Caller\n2️⃣ Wallet\n3️⃣ History";
+      reply = "📞 Pay2Call Menu\n\n1️⃣ Talk to Caller\n2️⃣ Wallet\n3️⃣ History";
     }
 
-    await fetch(
-      `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: reply,
-        }),
-      }
-    );
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: reply,
+      }),
+    });
   }
 
   res.sendStatus(200);
 });
 
-// 🔹 SERVER START
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Bot running on port", PORT);
